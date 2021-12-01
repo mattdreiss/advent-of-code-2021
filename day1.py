@@ -25,8 +25,10 @@ for line in lines:
     # part 2 logic
     rolling_window.append(value)
     length = len(rolling_window)
+
     if length < 4:
         continue
+
     if length > 4:
         rolling_window.pop(0)
 
