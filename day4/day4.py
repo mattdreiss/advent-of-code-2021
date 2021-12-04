@@ -12,6 +12,8 @@ class Board:
 
     def __init__(self, values):
         self.cells = [Cell(value) for value in values]
+        self.score = 0
+        self.winning_number = -1
 
     def __str__(self):
         result = ""
@@ -23,6 +25,9 @@ class Board:
         for cell in self.cells:
             if num == cell.value:
                 cell.selected = True
+                if self.is_winner():
+                    self.score = self.calc_score(num)
+                    self.winning_number = num
 
     def is_winner(self):
         pos = 0
@@ -34,10 +39,10 @@ class Board:
                     and self.cells[pos * Board.width + 4].selected:
                 return True
             if self.cells[pos].selected \
-                    and self.cells[pos + Board.width].selected \
-                    and self.cells[pos + 2 * Board.width].selected \
-                    and self.cells[pos + 3 * Board.width].selected \
-                    and self.cells[pos + 4 * Board.width].selected:
+                    and self.cells[pos + Board.width * 1].selected \
+                    and self.cells[pos + Board.width * 2].selected \
+                    and self.cells[pos + Board.width * 3].selected \
+                    and self.cells[pos + Board.width * 4].selected:
                 return True
             pos += 1
 
@@ -73,19 +78,29 @@ def read_input():
     return selections, boards
 
 
+def play_round(selection, boards):
+    for board in boards:
+        board.mark_number(selection)
+    winners = list(filter(lambda b: b.score > 0, boards))
+    remaining = list(filter(lambda b: b.score == 0, boards))
+    return winners, remaining
+
+
 def play_game(selections, boards):
+    winners = []
+    remaining = boards
     for selection in selections:
-        for board in boards:
-            board.mark_number(selection)
-            if board.is_winner():
-                return board.calc_score(selection)
-    return 0
+        w, r = play_round(selection, remaining)
+        winners += w
+        remaining = r
+    return winners
 
 
 def main():
     selections, boards = read_input()
-    game_winner = play_game(selections, boards)
-    print(game_winner)
+    winners = play_game(selections, boards)
+    print(f'first winning board score: {winners[0].score}')
+    print(f'last winning board score: {winners[len(winners) - 1].score}')
 
 
 main()
