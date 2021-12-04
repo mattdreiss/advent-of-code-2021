@@ -25,6 +25,3 @@ epsilon = int(epsilon_string, 2)
 power = gamma * epsilon
 print(gamma, bin(epsilon), power)
 
-# part 2
-most_common_first_bit = 1 if counts[0] > len(reports) / 2 else 0
-
